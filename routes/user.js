@@ -9,7 +9,7 @@ userRouter.post("/register", userRegister);
 userRouter.get(
   "/admin",
   verifyUser,
-  authorizeRoles(["admin"]),
+  authorizeRoles("admin"),
   userProfile
 );
 
