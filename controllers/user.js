@@ -1,4 +1,4 @@
-import User from "../model/user.js"
+import User from "../model/user.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
@@ -6,8 +6,8 @@ import dotenv from "dotenv";
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
 export const userRegister = async (req, res) => {
-  const { username, email, password } = req.body;
-  const user =await User.findOne({ email });
+  const { username, email, password, roles } = req.body;
+  const user = await User.findOne({ email });
   if (user) {
     return res.status(400).json({ message: "User already exists" });
   }
@@ -22,8 +22,9 @@ export const userRegister = async (req, res) => {
     username,
     email,
     password: hashedPassword,
+    roles,
   });
-  res.status(200).json({ message: "User created successfully", user: newUser });
+  res.render("login");
 };
 export const userLogin = async (req, res) => {
   const { email, password } = req.body;
@@ -36,7 +37,7 @@ export const userLogin = async (req, res) => {
   if (!isCorrectPassword) {
     return res.status(400).json({ error: "Invalid password" });
   }
-  const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
+  const token = jwt.sign({ id: user._id, roles: user.roles }, JWT_SECRET, { expiresIn: "1h" });
   res.cookie("Token", token, {
     httpOnly: true,
     secure: true,
@@ -45,3 +46,7 @@ export const userLogin = async (req, res) => {
   });
   res.status(200).json({ message: "User login Successfully", user: user });
 };
+export const userProfile = async (req, res) => {
+  res.status(200).json({ message: "Welcome to admin panel" });
+};
+

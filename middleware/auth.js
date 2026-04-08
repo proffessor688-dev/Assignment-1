@@ -3,12 +3,14 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+
+
 const JWT_SECRET = process.env.JWT_SECRET;
 
 export const verifyUser = async (req, res, next) => {
   try {
-    const token = req.cookies.token;
-
+    const token = req.cookies.Token;
+  
     if (!token) {
       return res.status(401).json({ error: "Token not found" });
     }
