@@ -1,10 +1,13 @@
 import User from "../model/user.js"
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import dotenv from "dotenv";
 
+dotenv.config();
+const JWT_SECRET = process.env.JWT_SECRET;
 export const userRegister = async (req, res) => {
   const { username, email, password } = req.body;
-  const user = User.findOne({ email });
+  const user =await User.findOne({ email });
   if (user) {
     return res.status(400).json({ message: "User already exists" });
   }
@@ -30,7 +33,7 @@ export const userLogin = async (req, res) => {
     return res.status(400).json({ error: "User not found" });
   }
   const isCorrectPassword = bcrypt.compare(password, user.password);
-  if (!isPasswordCorrect) {
+  if (!isCorrectPassword) {
     return res.status(400).json({ error: "Invalid password" });
   }
   const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
